@@ -17,3 +17,5 @@ class Violation(Base):
     owner_last_name = Column(String, nullable=False)
     owner_ssn = Column(String, nullable=False)
     owner_phone = Column(String, nullable=False)
+    owner_email = Column(String, nullable=False)
+    owner_purchase_date = Column(DateTime(timezone=True))

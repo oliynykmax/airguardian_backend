@@ -15,11 +15,11 @@ def fetch_drones():
             return data
         else:
             print("Warning: API did not return a list as expected.")
-            return [] # Return an empty list if the format is wrong
+            return []
 
     except requests.RequestException as e:
         print("Error during request to fetch drones:", e)
-        return [] # Return an empty list on failure
+        return []
     except json.JSONDecodeError:
         print("Error: Failed to decode JSON from the response.")
         return []
@@ -35,24 +35,17 @@ def fetch_and_store_violations():
     session = SessionLocal()
     violations_added = 0
     try:
-        # 1. Fetch drone data
         drones = fetch_drones()
         if not drones:
             print("Failed to fetch drones or no drones returned.")
             return 0
-
         if isinstance(drones, list):
             for drone in drones:
-                # The API fields are: owner_id, x, y, z
                 x, y, z = drone["x"], drone["y"], drone["z"]
                 owner_id = drone["owner_id"]
-                drone_id = owner_id  # Use owner_id as drone_id if no other unique identifier
-
+                drone_id = owner_id
                 print(f"Drone: owner_id={owner_id}, x={x}, y={y}, z={z}")
-
-                # 2. Check for NFZ violation
                 if is_in_nfz(x, y):
-                    # 3. Fetch owner info
                     owner_url = f"{USERS_API_URL_TEMPLATE.rstrip('/')}/{owner_id}"
                     try:
                         owner_resp = requests.get(owner_url, timeout=5)
@@ -69,10 +62,12 @@ def fetch_and_store_violations():
                         position_x=x,
                         position_y=y,
                         position_z=z,
-                        owner_first_name=owner.get("firstName", ""),
-                        owner_last_name=owner.get("lastName", ""),
-                        owner_ssn=owner.get("socialSecurityNumber", ""),
-                        owner_phone=owner.get("phoneNumber", ""),
+                        owner_first_name=owner["first_name"],
+                        owner_last_name=owner["last_name"],
+                        owner_ssn=owner["social_security_number"],
+                        owner_phone=owner["phone_number"],
+                        owner_email=owner["email"],
+                        owner_purchase_date=owner["purchased_at"]
                     )
                     session.add(violation)
                     violations_added += 1
