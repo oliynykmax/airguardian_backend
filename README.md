@@ -42,17 +42,6 @@ cd drone_rush
   cp .env.example .env
   ```
 - **Do not commit your `.env` file!**
-
-### 3. Install Dependencies
-
-#### Using Poetry (recommended for local development):
-
-```sh
-poetry install
-```
-
----
-
 ## Running the Application
 
 ### Using Docker Compose (recommended)
@@ -60,7 +49,7 @@ poetry install
 This will start the FastAPI app, Celery worker, PostgreSQL, and Redis:
 
 ```sh
-docker-compose up --build
+docker-compose up --build -d
 ```
 
 - FastAPI app: [http://localhost:8000](http://localhost:8000)
@@ -101,7 +90,6 @@ docker-compose up --build
 
 ## Logging
 
-- All logs are output to the console by default.
 - In Docker, view logs with `docker-compose logs web` or `docker-compose logs celery_worker`.
 - To log to a file, modify the `logging.basicConfig` call in the code (see `main.py`, `logic.py`, and `celery_bot.py`).
 - Docker logs are stored on the host at `/var/lib/docker/containers/<container-id>/<container-id>-json.log` (Linux), but are usually accessed via Docker commands.
