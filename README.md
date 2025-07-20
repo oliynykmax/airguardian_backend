@@ -51,12 +51,6 @@ cd drone_rush
 poetry install
 ```
 
-#### Or with pip (not recommended, but possible):
-
-```sh
-pip install -r requirements.txt
-```
-
 ---
 
 ## Running the Application
@@ -121,15 +115,3 @@ docker-compose up --build
 - **Violations** are only stored if a drone enters the NFZ.
 - **Owner info** is fetched only for violating drones to minimize external API calls.
 - All API endpoints use Pydantic models for request/response validation.
-
----
-
-## License
-
-MIT (or your chosen license)
-
----
-
-## Contact
-
-info@hive.fi
