@@ -1,7 +1,7 @@
 import logging
 from fastapi import FastAPI, HTTPException, Header, Depends
 from .schemas import (
-    HealthResponse, RootResponse, DronesResponse, Drone,
+    HealthResponse, RootResponse, DronesResponse,
     ViolationResponse, NFZViolationsResponse
 )
 from .logic import fetch_drones
