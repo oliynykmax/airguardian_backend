@@ -58,8 +58,8 @@ def fetch_and_store_violations():
                 x, y, z = drone["x"], drone["y"], drone["z"]
                 owner_id = drone["owner_id"]
                 drone_id = drone["id"]
-                logger.info(f"Drone: owner_id={owner_id}, x={x}, y={y}, z={z}")
                 if is_in_nfz(x, y):
+                    logger.info(f"Drone violation: owner_id={owner_id}, x={x}, y={y}, z={z}")
                     owner_url = f"{USERS_API_URL_TEMPLATE.rstrip('/')}/{owner_id}"
                     try:
                         owner_resp = requests.get(owner_url, timeout=5)
