@@ -10,6 +10,8 @@ from sqlalchemy.orm import Session
 from datetime import datetime, timedelta
 from .models import Base, Violation
 from .database import engine, SessionLocal
+from fastapi.middleware.cors import CORSMiddleware
+
 
 # Configure logging for FastAPI app
 logging.basicConfig(
@@ -67,3 +69,12 @@ def get_nfz_violations(db: Session = Depends(get_db)):
     except Exception as e:
         logger.error(f"Exception in /nfz endpoint: {e}")
         raise HTTPException(status_code=500, detail="Internal server error")
+
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Or specify ["http://localhost:3000"]
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
