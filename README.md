@@ -56,6 +56,32 @@ docker-compose up --build -d
 - PostgreSQL: localhost:5432
 - Redis: localhost:6379
 
+---
+
+## Accessing Services
+
+When running with Docker Compose, you can access the following services:
+
+- **Backend API (FastAPI):**  
+  [http://localhost:8000](http://localhost:8000)  
+  Use this URL to access the backend API endpoints from your browser or API client.
+
+- **Frontend (React app):**  
+  [http://localhost:3000](http://localhost:3000)  
+  Open this URL in your browser to use the web interface.
+
+- **PostgreSQL Database:**  
+  Host: `localhost`  
+  Port: `5432`  
+  Use these settings in your database client or application configuration.
+
+- **Redis:**  
+  Host: `localhost`  
+  Port: `6379`  
+  Use these settings for connecting to Redis.
+
+> The database and Redis ports are mapped for local development and are intended for internal use or advanced users (e.g., connecting with a database GUI or Redis CLI).
+
 ### Running Locally (without Docker)
 
 1. Start PostgreSQL and Redis locally.
