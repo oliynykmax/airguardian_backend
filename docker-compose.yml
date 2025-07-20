@@ -17,5 +17,35 @@ services:
         ports:
             - "6379:6379"
 
+    web:
+        build: .
+        command: poetry run uvicorn drone_rush:app --reload --host 0.0.0.0 --port 8000
+        volumes:
+            - .:/app
+        ports:
+            - "8000:8000"
+        depends_on:
+            - db
+            - redis
+        environment:
+            # Add any environment variables your app needs here
+            POSTGRES_USER: ${POSTGRES_USER}
+            POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+            POSTGRES_DB: ${POSTGRES_DB}
+
+    celery_worker:
+        build: .
+        command: poetry run celery -A drone_rush.celery_bot.celery_app worker --beat --loglevel=info
+        volumes:
+            - .:/app
+        depends_on:
+            - db
+            - redis
+        environment:
+            # Add any environment variables Celery needs here
+            POSTGRES_USER: ${POSTGRES_USER}
+            POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+            POSTGRES_DB: ${POSTGRES_DB}
+
 volumes:
     pgdata:

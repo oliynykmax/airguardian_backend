@@ -1,6 +1,14 @@
 import os
+import logging
 from celery import Celery
 from drone_rush.logic import fetch_and_store_violations
+
+# Configure logging for Celery worker
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(name)s: %(message)s"
+)
+logger = logging.getLogger(__name__)
 
 REDIS_URL = os.getenv("REDIS_URL", "redis://localhost:6379/0")
 
@@ -25,4 +33,4 @@ def fetch_and_store_violations_task():
     try:
         fetch_and_store_violations()
     except Exception as e:
-        print(f"Error in fetch_and_store_violations_task: {e}")
+        logger.error(f"Error in fetch_and_store_violations_task: {e}")

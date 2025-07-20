@@ -5,6 +5,14 @@ from .models import Violation
 import os
 import json
 from datetime import datetime
+import logging
+
+# Configure logging for this module
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(name)s: %(message)s"
+)
+logger = logging.getLogger(__name__)
 
 def fetch_drones():
     try:
@@ -14,14 +22,14 @@ def fetch_drones():
         if isinstance(data, list):
             return data
         else:
-            print("Warning: API did not return a list as expected.")
+            logger.warning("API did not return a list as expected.")
             return []
 
     except requests.RequestException as e:
-        print("Error during request to fetch drones:", e)
+        logger.error(f"Error during request to fetch drones: {e}")
         return []
     except json.JSONDecodeError:
-        print("Error: Failed to decode JSON from the response.")
+        logger.error("Failed to decode JSON from the response.")
         return []
 
 
@@ -32,19 +40,25 @@ def is_in_nfz(x, y, radius=1000):
     return sqrt(x**2 + y**2) <= radius
 
 def fetch_and_store_violations():
+    if not USERS_API_URL_TEMPLATE:
+        logger.error("USERS_API_URL_TEMPLATE is not set.")
+        return 0
+    if not DRONES_API_URL:
+        logger.error("DRONES_API_URL is not set.")
+        return 0
     session = SessionLocal()
     violations_added = 0
     try:
         drones = fetch_drones()
         if not drones:
-            print("Failed to fetch drones or no drones returned.")
+            logger.warning("Failed to fetch drones or no drones returned.")
             return 0
         if isinstance(drones, list):
             for drone in drones:
                 x, y, z = drone["x"], drone["y"], drone["z"]
                 owner_id = drone["owner_id"]
-                drone_id = owner_id
-                print(f"Drone: owner_id={owner_id}, x={x}, y={y}, z={z}")
+                drone_id = drone["id"]
+                logger.info(f"Drone: owner_id={owner_id}, x={x}, y={y}, z={z}")
                 if is_in_nfz(x, y):
                     owner_url = f"{USERS_API_URL_TEMPLATE.rstrip('/')}/{owner_id}"
                     try:
@@ -52,12 +66,12 @@ def fetch_and_store_violations():
                         owner_resp.raise_for_status()
                         owner = owner_resp.json()
                     except Exception as e:
-                        print(f"Failed to fetch owner info for {owner_id}: {e}")
+                        logger.error(f"Failed to fetch owner info for {owner_id}: {e}")
                         continue
 
                     # 4. Store violation in DB
                     violation = Violation(
-                    	timestamp=datetime.now(),
+                        timestamp=datetime.now(),
                         drone_id=drone_id,
                         position_x=x,
                         position_y=y,
@@ -72,13 +86,13 @@ def fetch_and_store_violations():
                     session.add(violation)
                     violations_added += 1
             session.commit()
-            print(f"Added {violations_added} violations to the database.")
+            logger.info(f"Added {violations_added} violations to the database.")
         else:
-            print("No violations detected.")
+            logger.info("No violations detected.")
             return violations_added
     except Exception as e:
-        print("Error processing drones:", e)
-        print("Rolling back the session due to an error.")
+        logger.error(f"Error processing drones: {e}")
+        logger.error("Rolling back the session due to an error.")
         session.rollback()
         return 0
     finally:
