@@ -1,7 +1,7 @@
 import os
 import logging
 from celery import Celery
-from drone_rush.logic import fetch_and_store_violations
+from python_backend.logic import fetch_and_store_violations
 
 # Configure logging for Celery worker
 logging.basicConfig(
@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 REDIS_URL = os.getenv("REDIS_URL", "redis://localhost:6379/0")
 
 celery_app = Celery(
-    "drone_rush",
+    "python_backend",
     broker=REDIS_URL,
     backend=REDIS_URL,
 )
@@ -22,7 +22,7 @@ celery_app.conf.update(
     timezone="UTC",
     beat_schedule={
         "fetch-and-store-violations-every-10-seconds": {
-            "task": "drone_rush.celery_bot.fetch_and_store_violations_task",
+            "task": "python_backend.celery_bot.fetch_and_store_violations_task",
             "schedule": 10.0,
         },
     }

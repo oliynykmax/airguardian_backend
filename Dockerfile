@@ -15,9 +15,9 @@ RUN pip install --upgrade pip && pip install poetry
 
 COPY pyproject.toml poetry.lock* /app/
 COPY README.md /app/
-COPY drone_rush /app/drone_rush
+COPY python_backend /app/python_backend
 RUN poetry config virtualenvs.create false && poetry install --no-interaction --no-ansi
 COPY . /app/
 
 # Default command (override in docker-compose)
-CMD ["poetry", "run", "uvicorn", "drone_rush:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["poetry", "run", "uvicorn", "python_backend:app", "--host", "0.0.0.0", "--port", "8000"]

@@ -19,7 +19,7 @@ services:
 
     web:
         build: .
-        command: poetry run uvicorn drone_rush:app --reload --host 0.0.0.0 --port 8000
+        command: poetry run uvicorn python_backend:app --reload --host 0.0.0.0 --port 8000
         volumes:
             - .:/app
         ports:
@@ -35,7 +35,7 @@ services:
 
     celery_worker:
         build: .
-        command: poetry run celery -A drone_rush.celery_bot.celery_app worker --beat --loglevel=info
+        command: poetry run celery -A python_backend.celery_bot.celery_app worker --beat --loglevel=info
         volumes:
             - .:/app
         depends_on:

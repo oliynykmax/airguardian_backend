@@ -32,7 +32,7 @@ Airguardian is a backend system for real-time monitoring of drone activity near 
 
 ```sh
 git clone <your-repo-url>
-cd drone_rush
+cd python_backend
 ```
 
 ### 2. Environment Variables
@@ -88,11 +88,11 @@ When running with Docker Compose, you can access the following services:
 2. Ensure your `.env` points to the correct local services.
 3. Start the FastAPI app:
    ```sh
-   poetry run uvicorn drone_rush:app --reload
+   poetry run uvicorn python_backend:app --reload
    ```
 4. Start the Celery worker:
    ```sh
-   poetry run celery -A drone_rush.celery_bot.celery_app worker --beat --loglevel=info
+   poetry run celery -A python_backend.celery_bot.celery_app worker --beat --loglevel=info
    ```
 
 ---
